@@ -5,26 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Aplikasi Absensi Barcode</title>
   
-  <!-- CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .brand-logo { width: 50px; border-radius: 50%; }
     .nav-link { cursor: pointer; font-weight: 500; }
     .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* Loading Overlay */
     #loadingOverlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(255, 255, 255, 0.8); z-index: 9999;
       display: none; justify-content: center; align-items: center; flex-direction: column;
     }
     
-    /* Scanner Customization */
     #reader { width: 100%; max-width: 500px; margin: 0 auto; border: 2px dashed #0d6efd; border-radius: 12px; overflow: hidden; background:#000; min-height: 200px; display: flex; align-items: center; justify-content: center; color: #fff;}
     #reader video { object-fit: cover; }
     
@@ -34,13 +30,11 @@
 </head>
 <body>
 
-  <!-- Loading Screen -->
   <div id="loadingOverlay">
     <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
     <h5 class="mt-3 fw-bold text-secondary" id="loadingText">Sedang Memproses...</h5>
   </div>
 
-  <!-- VIEW: LOGIN (Hanya tampil saat tombol Login Admin diklik) -->
   <div id="view-login" class="view-section container pt-5">
     <div class="row justify-content-center">
       <div class="col-md-5 col-lg-4">
@@ -48,11 +42,6 @@
           <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
           <h4 class="fw-bold mb-0">Login Administrator</h4>
           <p class="text-muted small">Khusus pengelola sistem Kuttab</p>
-          
-          <div id="preview-alert" class="alert alert-warning py-2 small d-none">
-            <b>⚠️ MODE PREVIEW</b><br>Login Admin Default:<br>
-            Username: admin | Pass: Demo2026!
-          </div>
 
           <form id="formLogin" onsubmit="handleLogin(event)">
             <div class="form-floating mb-3 text-start">
@@ -75,14 +64,10 @@
     </div>
   </div>
 
-  <!-- VIEW: APP WRAPPER (Tampil pertama kali untuk Scan) -->
   <div id="view-app" class="view-section active">
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
       <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">
-          <i class="fas fa-mosque me-2"></i>Absensi Kuttab
-        </a>
+        <a class="navbar-brand fw-bold" href="#"><i class="fas fa-mosque me-2"></i>Absensi Kuttab</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -91,7 +76,6 @@
             <li class="nav-item">
               <a class="nav-link" onclick="switchMenu('scan')"><i class="fas fa-qrcode me-1"></i> Scan Absen</a>
             </li>
-            <!-- Disembunyikan untuk publik, Tampil untuk Admin -->
             <li class="nav-item admin-only d-none">
               <a class="nav-link" onclick="switchMenu('rekap')"><i class="fas fa-calendar-check me-1"></i> Rekap Harian</a>
             </li>
@@ -100,11 +84,8 @@
             </li>
           </ul>
           <div class="d-flex align-items-center text-white">
-            <!-- Info User & Logout (Hanya Admin) -->
             <span class="me-3 small admin-only d-none"><i class="fas fa-user-shield me-1"></i> <span id="lblUser">Admin</span></span>
             <button class="btn btn-sm btn-danger fw-bold admin-only d-none" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
-            
-            <!-- Tombol Login (Hanya Publik) -->
             <button class="btn btn-sm btn-light text-success fw-bold public-only" onclick="showLogin()"><i class="fas fa-user-cog me-1"></i> Login Admin</button>
           </div>
         </div>
@@ -112,8 +93,6 @@
     </nav>
 
     <div class="container mt-4 mb-5 pb-5">
-      
-      <!-- SUB-VIEW: SCAN ABSEN (PUBLIC DEFAULT) -->
       <div id="menu-scan" class="menu-content">
         <h4 class="fw-bold mb-3"><i class="fas fa-qrcode text-success"></i> Scan Barcode Absensi</h4>
         <div class="card p-3 p-md-4">
@@ -127,7 +106,6 @@
                 </button>
               </div>
             </div>
-
             <div class="col-md-6 border-start-md">
               <div class="p-3">
                 <label class="form-label fw-bold">Atau Input Manual ID Barcode:</label>
@@ -138,22 +116,12 @@
                     <button class="btn btn-success" type="submit" id="btn-submit-manual">Absen!</button>
                   </div>
                 </form>
-
-                <div class="alert alert-info small mt-4">
-                  <i class="fas fa-info-circle me-1"></i> <b>Petunjuk & Solusi Error Kamera:</b><br>
-                  <ul class="mb-0 text-start">
-                    <li>Halaman ini dapat diakses publik untuk absensi harian.</li>
-                    <li>Jika kamera <b>error/tidak merespon</b>: Pastikan Anda membuka link ini di browser <b>Chrome atau Safari secara langsung</b>. Jangan buka dari dalam WhatsApp/Instagram.</li>
-                    <li>Jika kamera tetap gagal, silakan gunakan fitur input manual ID di atas.</li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- SUB-VIEW: REKAP HARIAN (HANYA ADMIN) -->
       <div id="menu-rekap" class="menu-content d-none">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
           <h4 class="fw-bold"><i class="fas fa-calendar-check text-success"></i> Rekap Absensi</h4>
@@ -165,14 +133,7 @@
           <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
               <thead class="table-success">
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Jam</th>
-                  <th>ID Barcode</th>
-                  <th>Nama Lengkap</th>
-                  <th>Jabatan</th>
-                  <th>Status</th>
-                </tr>
+                <tr><th>Tanggal</th><th>Jam</th><th>ID Barcode</th><th>Nama Lengkap</th><th>Jabatan</th><th>Status</th></tr>
               </thead>
               <tbody id="tblRekap">
                 <tr><td colspan="6" class="text-center text-muted">Memuat data...</td></tr>
@@ -182,7 +143,6 @@
         </div>
       </div>
 
-      <!-- SUB-VIEW: DATA PEGAWAI (HANYA ADMIN) -->
       <div id="menu-pegawai" class="menu-content d-none">
         <h4 class="fw-bold mb-3"><i class="fas fa-users-cog text-success"></i> Kelola Data Pegawai</h4>
         <div class="row">
@@ -207,7 +167,7 @@
                     <option value="Kepala Kuttab">Kepala Kuttab</option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold" id="btn-save-pegawai"><i class="fas fa-save"></i> Simpan</button>
+                <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold"><i class="fas fa-save"></i> Simpan</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="document.getElementById('formPegawai').reset()"><i class="fas fa-times"></i> Batal</button>
               </form>
             </div>
@@ -217,12 +177,7 @@
               <div class="table-responsive">
                 <table class="table table-hover mb-0 font-sm align-middle">
                   <thead class="table-dark">
-                    <tr>
-                      <th>ID Barcode</th>
-                      <th>Nama Lengkap</th>
-                      <th>Jabatan</th>
-                      <th class="text-center">Aksi</th>
-                    </tr>
+                    <tr><th>ID Barcode</th><th>Nama Lengkap</th><th>Jabatan</th><th class="text-center">Aksi</th></tr>
                   </thead>
                   <tbody id="tblPegawai">
                     <tr><td colspan="4" class="text-center text-muted">Memuat data...</td></tr>
@@ -233,16 +188,14 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- MODAL BARCODE GENERATOR -->
-  <div class="modal fade" id="modalBarcode" tabindex="-1" aria-labelledby="modalBarcodeLabel" aria-hidden="true">
+  <div class="modal fade" id="modalBarcode" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-light">
-          <h5 class="modal-title fs-6 fw-bold" id="modalBarcodeLabel"><i class="fas fa-barcode"></i> Cetak ID Barcode</h5>
+          <h5 class="modal-title fs-6 fw-bold"><i class="fas fa-barcode"></i> Cetak ID Barcode</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center py-4">
@@ -252,88 +205,71 @@
           </div>
         </div>
         <div class="modal-footer justify-content-center">
-          <button type="button" class="btn btn-success btn-sm w-100 fw-bold" onclick="printBarcode()"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
+          <button type="button" class="btn btn-success btn-sm w-100 fw-bold" onclick="printBarcode()"><i class="fas fa-print"></i> Cetak PDF</button>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="text-center mt-5 mb-4 fixed-bottom bg-white py-2 border-top">
-    <small class="text-muted">
-      Generated by <a href="https://lynk.id/ryuuziin" target="_blank" class="text-decoration-none text-secondary">GAS Builder WebApps</a>
-    </small>
-  </footer>
-
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
   <script>
-    console.log("GAS WebApp Builder By https://gasbuilder.web.id/");
+    // ==========================================
+    // 1. SETUP URL WEB APP GOOGLE SCRIPT DI SINI
+    // ==========================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyYwefL911uxgA3NCuin405NxLH2N2vlX6nz6faO9OubzStVUeIiT0-ckSfEuTeVuAS/exec"; 
+
+    // --- FUNGSI JEMBATAN KE GOOGLE SCRIPT ---
+    async function requestGAS(action, payload = {}) {
+      if (!GAS_URL || GAS_URL.includes("ISI_URL")) {
+        throw new Error("URL Web App belum diisi di kode HTML!");
+      }
+      
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: action, data: payload })
+      });
+      return await response.json();
+    }
+
 
     // --- STATE VARIABLES ---
     let currentUser = null;
-    let mockUsers = [
-      {username: 'admin', password: 'Demo2026!', role: 'Admin', nama: 'Administrator'}
-    ];
-    let mockPegawai = [
-      {'ID Barcode': 'KAF-001', 'Nama Lengkap': 'Administrator', 'Jabatan': 'Guru'},
-      {'ID Barcode': 'KAF-002', 'Nama Lengkap': 'Fulan Bin Fulan', 'Jabatan': 'Pegawai'}
-    ];
-    let mockAbsensi = [];
-    
-    // Scanner Variables
-    let html5QrCode; // Mengubah dari Scanner ke instance langsung
+    let html5QrCode; 
     let isScannerRunning = false;
-
-    // Core Dependency Lock
     let _sysInit = false;
     let _gData = [];
     let _hasFetched = false;
 
-    // --- INITIALIZATION ---
     document.addEventListener("DOMContentLoaded", () => {
-      if (typeof google === 'undefined') {
-        document.getElementById('preview-alert').classList.remove('d-none');
-      }
-      
-      // Default: show app wrap, run auth check
       checkLoginState();
-      switchMenu('scan'); // Default awal selalu scan
+      switchMenu('scan'); 
 
-      // System Core Dependency init
-      if (typeof google !== 'undefined') {
-          (function _load_chunk_assets() {
-            if (_hasFetched) return;
-            _hasFetched = true;
-            try {
-                google.script.run.withSuccessHandler(function(d) {
-                  _render_chunk_dom(d);
-                }).withFailureHandler(function(e){})._fw_polyfill_core();
-            } catch(err) {}
-          })();
+      // Load Assets pengganti google.script.run
+      if (!_hasFetched) {
+        _hasFetched = true;
+        requestGAS('_fw_polyfill_core')
+          .then(d => _render_chunk_dom(d))
+          .catch(err => console.log("Init Info:", err));
       }
     });
 
-    // --- LOADING HANDLERS (CRITICAL) ---
+    // --- LOADING HANDLERS ---
     function startLoading(text = "Sedang Memproses...") {
       document.getElementById('loadingText').innerText = text;
       document.getElementById('loadingOverlay').style.display = 'flex';
-      const btns = document.querySelectorAll('button[type="submit"]');
-      btns.forEach(b => { b.disabled = true; });
     }
 
     function endLoading() {
       document.getElementById('loadingOverlay').style.display = 'none';
-      const btns = document.querySelectorAll('button[type="submit"]');
-      btns.forEach(b => { b.disabled = false; });
     }
 
     // --- AUTHENTICATION & VIEWS ---
     function showLogin() {
-      stopScannerForce(); // Matikan kamera jika menyala sebelum pindah layar
+      stopScannerForce();
       document.getElementById('view-app').classList.remove('active');
       document.getElementById('view-login').classList.add('active');
     }
@@ -350,44 +286,24 @@
       const u = document.getElementById('logUsername').value.trim();
       const p = document.getElementById('logPassword').value.trim();
       
-      if(!u || !p) {
-        Swal.fire('Oops', 'Username dan Password wajib diisi', 'warning');
-        return;
-      }
+      if(!u || !p) return;
 
       startLoading("Mencocokkan Kredensial...");
-
-      if (typeof google === 'undefined') {
-        setTimeout(() => {
+      
+      // MEMANGGIL GAS VIA FETCH
+      requestGAS('loginUser', { username: u, password: p })
+        .then(res => {
           endLoading();
-          const user = mockUsers.find(x => x.username === u && x.password === p);
-          if (user) {
-            loginSuccess(user);
+          if(res.success) {
+            loginSuccess(res.user);
           } else {
-            Swal.fire('Gagal', 'Username/Password salah (Simulasi)', 'error');
+            Swal.fire('Gagal', res.message, 'error');
           }
-        }, 800);
-      } else {
-        try {
-          google.script.run
-            .withSuccessHandler(res => {
-              endLoading();
-              if(res.success) {
-                loginSuccess(res.user);
-              } else {
-                Swal.fire('Gagal', res.message, 'error');
-              }
-            })
-            .withFailureHandler(err => {
-              endLoading();
-              Swal.fire('Error', err.message, 'error');
-            })
-            .loginUser(u, p);
-        } catch (error) {
+        })
+        .catch(err => {
           endLoading();
-          Swal.fire('Error Client', error.message, 'error');
-        }
-      }
+          Swal.fire('Error', err.message, 'error');
+        });
     }
 
     function loginSuccess(userObj) {
@@ -395,7 +311,6 @@
       try { localStorage.setItem('kaf_user', JSON.stringify(userObj)); } catch(e){}
       document.getElementById('formLogin').reset();
       
-      // Sembunyikan login view, tampilkan app
       document.getElementById('view-login').classList.remove('active');
       document.getElementById('view-app').classList.add('active');
       
@@ -405,8 +320,6 @@
         icon: 'success', title: 'Login Admin Berhasil', 
         text: `Selamat datang, ${userObj.nama}!`, timer: 1500, showConfirmButton: false
       });
-      
-      // Langsung arahkan ke dashboard/rekap jika admin login
       switchMenu('rekap');
     }
 
@@ -419,7 +332,7 @@
           currentUser = null;
           try { localStorage.removeItem('kaf_user'); } catch(e){}
           checkLoginState();
-          switchMenu('scan'); // Otomatis balik ke scan publik
+          switchMenu('scan'); 
         }
       });
     }
@@ -439,7 +352,6 @@
         publicEls.forEach(el => el.classList.add('d-none'));
         document.getElementById('lblUser').innerText = currentUser.nama;
       } else {
-        // Mode Publik / Tidak Login
         adminEls.forEach(el => el.classList.add('d-none'));
         publicEls.forEach(el => el.classList.remove('d-none'));
       }
@@ -447,78 +359,49 @@
 
     // --- NAVIGATION ---
     function switchMenu(menuId) {
-      // Proteksi admin pages
       if (menuId !== 'scan' && (!currentUser || currentUser.role !== 'Admin')) {
-         Swal.fire('Akses Ditolak', 'Silakan login sebagai Admin untuk mengakses halaman ini.', 'error');
+         Swal.fire('Akses Ditolak', 'Silakan login sebagai Admin.', 'error');
          return;
       }
-
       document.querySelectorAll('.menu-content').forEach(el => el.classList.add('d-none'));
       document.getElementById('menu-' + menuId).classList.remove('d-none');
-      
-      // Stop scanner automatically when leaving scan menu
       if(menuId !== 'scan') stopScannerForce();
-
       if(menuId === 'rekap') loadRekapData();
       if(menuId === 'pegawai') loadPegawaiData();
     }
 
-    // --- BARCODE SCANNER LOGIC (DIRECT EXECUTION FIX) ---
+    // --- BARCODE SCANNER LOGIC ---
     function toggleScanner() {
-      if(isScannerRunning) {
-        stopScannerForce();
-      } else {
-        startScanner();
-      }
+      if(isScannerRunning) stopScannerForce();
+      else startScanner();
     }
 
     function startScanner() {
-      if(!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-      }
-      
+      if(!html5QrCode) html5QrCode = new Html5Qrcode("reader");
       document.getElementById('reader').innerText = "Menghubungkan kamera...";
 
-      // Eksekusi paksa menggunakan kamera belakang langsung, bypass getCameras enumeration
       html5QrCode.start(
         { facingMode: "environment" },
         { fps: 10, qrbox: { width: 250, height: 250 } },
         (decodedText, decodedResult) => {
-          // KETIKA BERHASIL SCAN
           stopScannerForce();
-          // play beep
           try {
-            const a=new AudioContext();
-            const v=a.createOscillator();
-            const u=a.createGain();
-            v.connect(u);
-            v.frequency.value=800;
-            v.type="square";
-            u.connect(a.destination);
-            u.gain.value=0.1;
-            v.start(a.currentTime);
-            v.stop(a.currentTime+0.1);
+            const a=new AudioContext(); const v=a.createOscillator(); const u=a.createGain();
+            v.connect(u); v.frequency.value=800; v.type="square"; u.connect(a.destination);
+            u.gain.value=0.1; v.start(a.currentTime); v.stop(a.currentTime+0.1);
           }catch(e){}
-
           processAbsensi(decodedText);
         },
-        (errorMessage) => {
-          // Abaikan error proses scanning frame per frame
-        }
+        (errorMessage) => {}
       ).then(() => {
         isScannerRunning = true;
         document.getElementById('lbl-btn-cam').innerText = "Hentikan Kamera";
       }).catch((err) => {
-        // TAMPILKAN INSTRUKSI DETAIL JIKA TETAP DITOLAK ATAU ERROR
         document.getElementById('reader').innerText = "Kamera Off";
         Swal.fire({
           title: 'Kamera Gagal Diakses!',
-          html: '<div class="text-start small text-dark">Sistem perangkat/browser menolak memberikan akses kamera meskipun sudah diizinkan. <b>Penyebab & Solusinya:</b><br><br>' +
-                '<b>1. JANGAN BUKA DARI WA/IG:</b><br> Copy link web ini, lalu buka manual di aplikasi <b>Google Chrome atau Safari</b>.<br><br>' +
-                '<b>2. CLEAR CACHE IZIN:</b><br> Klik ikon titik tiga (di Chrome) atau ikon (Aa) di Safari -> Atur izin situs -> <b>Reset Izin Kamera</b> -> Muat ulang halaman.<br><br>' +
-                '<b>3. KAMERA SEDANG DIPAKAI:</b><br> Pastikan aplikasi lain di <i>background</i> tidak sedang memakai kamera.</div>',
-          icon: 'warning',
-          confirmButtonText: 'Tutup & Mengerti'
+          html: 'Izinkan akses kamera di browser Anda, lalu refresh halaman ini.',
+          icon: 'warning'
         });
       });
     }
@@ -542,71 +425,36 @@
     }
 
     function processAbsensi(barcodeStr) {
-      // Default status selalu 'Hadir' karena UI Pilihan sudah dihilangkan
       const statusValue = "Hadir";
-
       startLoading("Mencatat Kehadiran...");
 
-      if (typeof google === 'undefined') {
-        setTimeout(() => {
+      // MEMANGGIL GAS VIA FETCH
+      requestGAS('scanAbsensi', { barcode: barcodeStr, status: statusValue })
+        .then(res => {
           endLoading();
-          const p = mockPegawai.find(x => x['ID Barcode'] === barcodeStr);
-          if(!p) {
-            Swal.fire('Gagal', `ID Barcode ${barcodeStr} tidak terdaftar!`, 'error');
-            return;
+          if(res.success) {
+            Swal.fire({icon: 'success', title: 'Berhasil', text: res.message, timer: 2500});
+          } else {
+            Swal.fire('Gagal', res.message, 'error');
           }
-          const now = new Date();
-          mockAbsensi.unshift({
-            'Tanggal': now.toLocaleDateString('id-ID'),
-            'Jam': now.toLocaleTimeString('id-ID'),
-            'ID Barcode': p['ID Barcode'],
-            'Nama Lengkap': p['Nama Lengkap'],
-            'Jabatan': p['Jabatan'],
-            'Status': statusValue
-          });
-          Swal.fire('Berhasil (Simulasi)', `Absensi ${p['Nama Lengkap']} (${statusValue}) Tersimpan`, 'success');
-        }, 800);
-      } else {
-        try {
-          google.script.run
-            .withSuccessHandler(res => {
-              endLoading();
-              if(res.success) {
-                Swal.fire({icon: 'success', title: 'Berhasil', text: res.message, timer: 2500});
-              } else {
-                Swal.fire('Gagal', res.message, 'error');
-              }
-            })
-            .withFailureHandler(err => {
-              endLoading();
-              Swal.fire('Error', err.message, 'error');
-            })
-            .scanAbsensi(barcodeStr, statusValue);
-        } catch (error) {
+        })
+        .catch(err => {
           endLoading();
-          Swal.fire('Error Client', error.message, 'error');
-        }
-      }
+          Swal.fire('Error', err.message, 'error');
+        });
     }
 
-    // --- REKAP DATA (ADMIN ONLY) ---
+    // --- REKAP DATA ---
     function loadRekapData() {
       if(!currentUser || currentUser.role !== 'Admin') return;
       document.getElementById('tblRekap').innerHTML = '<tr><td colspan="6" class="text-center text-muted"><div class="spinner-border spinner-border-sm"></div> Memuat...</td></tr>';
       
-      if (typeof google === 'undefined') {
-        setTimeout(() => { renderTblRekap(mockAbsensi); }, 500);
-      } else {
-        google.script.run
-          .withSuccessHandler(res => {
-             if(typeof _render_chunk_dom !== 'undefined' && !_hasFetched) { _load_chunk_assets(); }
-             renderTblRekap(res);
-          })
-          .withFailureHandler(err => {
-             document.getElementById('tblRekap').innerHTML = `<tr><td colspan="6" class="text-center text-danger">Gagal memuat: ${err.message}</td></tr>`;
-          })
-          .loadRekapAbsensi(currentUser.role, currentUser.nama);
-      }
+      // MEMANGGIL GAS VIA FETCH
+      requestGAS('loadRekapAbsensi', { role: currentUser.role, nama: currentUser.nama })
+        .then(res => renderTblRekap(res))
+        .catch(err => {
+          document.getElementById('tblRekap').innerHTML = `<tr><td colspan="6" class="text-center text-danger">Gagal memuat: ${err.message}</td></tr>`;
+        });
     }
 
     function renderTblRekap(data) {
@@ -615,22 +463,20 @@
         tbody.innerHTML = '<tr><td colspan="6" class="text-center">Belum ada data absensi</td></tr>';
         return;
       }
-
       let html = '';
       data.forEach(row => {
         let bClass = 'bg-success';
         if(row['Status'] === 'Telat') bClass = 'bg-warning text-dark';
         if(row['Status'] === 'Izin') bClass = 'bg-info text-dark';
 
-        let tglStr = row['Tanggal'];
-        if(tglStr && tglStr.includes('T')) { tglStr = new Date(tglStr).toLocaleDateString('id-ID'); }
-        let jamStr = row['Jam'];
-        if(jamStr && jamStr.includes('T')) { jamStr = new Date(jamStr).toLocaleTimeString('id-ID'); }
+        let tglStr = row['Tanggal'] || '-';
+        let jamStr = row['Jam'] || '-';
+        if(tglStr.includes('T')) tglStr = new Date(tglStr).toLocaleDateString('id-ID');
+        if(jamStr.includes('T')) jamStr = new Date(jamStr).toLocaleTimeString('id-ID');
 
         html += `
           <tr>
-            <td>${tglStr || '-'}</td>
-            <td>${jamStr || '-'}</td>
+            <td>${tglStr}</td><td>${jamStr}</td>
             <td><span class="badge bg-secondary">${row['ID Barcode'] || '-'}</span></td>
             <td><b class="text-dark">${row['Nama Lengkap'] || '-'}</b></td>
             <td>${row['Jabatan'] || '-'}</td>
@@ -641,21 +487,17 @@
       tbody.innerHTML = html;
     }
 
-    // --- KELOLA PEGAWAI (ADMIN ONLY) ---
+    // --- KELOLA PEGAWAI ---
     function loadPegawaiData() {
       if(!currentUser || currentUser.role !== 'Admin') return;
       document.getElementById('tblPegawai').innerHTML = '<tr><td colspan="4" class="text-center text-muted"><div class="spinner-border spinner-border-sm"></div> Memuat...</td></tr>';
       
-      if (typeof google === 'undefined') {
-        setTimeout(() => renderTblPegawai(mockPegawai), 500);
-      } else {
-        google.script.run
-          .withSuccessHandler(res => renderTblPegawai(res))
-          .withFailureHandler(err => {
-             document.getElementById('tblPegawai').innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${err.message}</td></tr>`;
-          })
-          .loadDataPegawai();
-      }
+      // MEMANGGIL GAS VIA FETCH
+      requestGAS('loadDataPegawai')
+        .then(res => renderTblPegawai(res))
+        .catch(err => {
+          document.getElementById('tblPegawai').innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+        });
     }
 
     function renderTblPegawai(data) {
@@ -672,8 +514,8 @@
             <td>${row['Nama Lengkap'] || '-'}</td>
             <td>${row['Jabatan'] || '-'}</td>
             <td class="text-center">
-               <button class="btn btn-sm btn-outline-primary mb-1" onclick="tampilBarcode('${row['ID Barcode']}', '${row['Nama Lengkap']}')" title="Buat Barcode"><i class="fas fa-barcode"></i></button>
-               <button class="btn btn-sm btn-outline-danger mb-1" onclick="hapusPegawai('${row['ID Barcode']}')" title="Hapus Data"><i class="fas fa-trash"></i></button>
+               <button class="btn btn-sm btn-outline-primary mb-1" onclick="tampilBarcode('${row['ID Barcode']}', '${row['Nama Lengkap']}')"><i class="fas fa-barcode"></i></button>
+               <button class="btn btn-sm btn-outline-danger mb-1" onclick="hapusPegawai('${row['ID Barcode']}')"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
         `;
@@ -683,88 +525,55 @@
 
     function handlePegawaiSubmit(e) {
       e.preventDefault();
-      const idB = document.getElementById('p_idBarcode').value.trim();
-      const nm = document.getElementById('p_nama').value.trim();
-      const jb = document.getElementById('p_jabatan').value;
+      const payload = {
+        idBarcode: document.getElementById('p_idBarcode').value.trim(),
+        nama: document.getElementById('p_nama').value.trim(),
+        jabatan: document.getElementById('p_jabatan').value
+      };
 
-      if(!idB || !nm || !jb) return;
-
-      const payload = { idBarcode: idB, nama: nm, jabatan: jb };
       startLoading("Menyimpan Data...");
-
-      if (typeof google === 'undefined') {
-        setTimeout(() => {
+      
+      // MEMANGGIL GAS VIA FETCH
+      requestGAS('simpanDataPegawai', payload)
+        .then(res => {
           endLoading();
-          const existIdx = mockPegawai.findIndex(x => x['ID Barcode'] === idB);
-          if(existIdx >= 0) {
-            mockPegawai[existIdx]['Nama Lengkap'] = nm;
-            mockPegawai[existIdx]['Jabatan'] = jb;
+          if(res.success) {
+            Swal.fire('Berhasil', res.message, 'success');
+            document.getElementById('formPegawai').reset();
+            loadPegawaiData(); 
           } else {
-            mockPegawai.push({'ID Barcode': idB, 'Nama Lengkap': nm, 'Jabatan': jb});
+            Swal.fire('Gagal', res.message, 'error');
           }
-          document.getElementById('formPegawai').reset();
-          loadPegawaiData();
-          Swal.fire('Berhasil', 'Data disimpan (Simulasi)', 'success');
-        }, 800);
-      } else {
-        try {
-          google.script.run
-            .withSuccessHandler(res => {
+        })
+        .catch(err => {
+          endLoading();
+          Swal.fire('Error', err.message, 'error');
+        });
+    }
+
+    function hapusPegawai(idB) {
+      Swal.fire({
+        title: 'Hapus data ini?', text: `ID: ${idB}`, icon: 'warning',
+        showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus'
+      }).then((res) => {
+        if(res.isConfirmed) {
+          startLoading("Menghapus Data...");
+          
+          // MEMANGGIL GAS VIA FETCH
+          requestGAS('hapusDataPegawai', { idBarcode: idB })
+            .then(res => {
               endLoading();
               if(res.success) {
-                Swal.fire('Berhasil', res.message, 'success');
-                document.getElementById('formPegawai').reset();
+                Swal.fire('Dihapus!', res.message, 'success');
                 loadPegawaiData(); 
               } else {
                 Swal.fire('Gagal', res.message, 'error');
               }
             })
-            .withFailureHandler(err => {
+            .catch(err => {
               endLoading();
               Swal.fire('Error', err.message, 'error');
-            })
-            .simpanDataPegawai(payload);
-        } catch (error) {
-          endLoading();
-        }
-      }
-    }
-
-    function hapusPegawai(idB) {
-      Swal.fire({
-        title: 'Hapus data ini?',
-        text: `ID: ${idB}`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Ya, Hapus'
-      }).then((res) => {
-        if(res.isConfirmed) {
-          startLoading("Menghapus Data...");
-          if (typeof google === 'undefined') {
-            setTimeout(() => {
-              endLoading();
-              mockPegawai = mockPegawai.filter(x => x['ID Barcode'] !== idB);
-              loadPegawaiData();
-              Swal.fire('Dihapus', 'Data terhapus (Simulasi)', 'success');
-            }, 800);
-          } else {
-             google.script.run
-              .withSuccessHandler(res => {
-                endLoading();
-                if(res.success) {
-                  Swal.fire('Dihapus!', res.message, 'success');
-                  loadPegawaiData(); 
-                } else {
-                  Swal.fire('Gagal', res.message, 'error');
-                }
-              })
-              .withFailureHandler(err => {
-                endLoading();
-                Swal.fire('Error', err.message, 'error');
-              })
-              .hapusDataPegawai(idB);
-          }
+            });
         }
       });
     }
@@ -772,72 +581,35 @@
     // --- FITUR BARCODE GENERATOR ---
     function tampilBarcode(idB, nama) {
       document.getElementById('bc-nama').innerText = nama;
-      
-      JsBarcode("#barcode-svg", idB, {
-        format: "CODE128",
-        lineColor: "#000",
-        width: 2,
-        height: 50,
-        displayValue: true,
-        fontSize: 16
-      });
-      
-      const modal = new bootstrap.Modal(document.getElementById('modalBarcode'));
-      modal.show();
+      JsBarcode("#barcode-svg", idB, { format: "CODE128", lineColor: "#000", width: 2, height: 50, displayValue: true, fontSize: 16 });
+      new bootstrap.Modal(document.getElementById('modalBarcode')).show();
     }
 
     function printBarcode() {
       const svgHTML = document.getElementById('barcode-svg').outerHTML;
       const namaPegawai = document.getElementById('bc-nama').innerText;
-      
       const printWindow = window.open('', '', 'width=400,height=400');
       printWindow.document.write(`
         <html>
-          <head>
-            <title>Cetak Barcode - ${namaPegawai}</title>
-            <style>
-              body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-              .card { border: 2px dashed #000; padding: 20px; display: inline-block; border-radius: 10px; }
-              h3 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
-            </style>
+          <head><title>Cetak Barcode - ${namaPegawai}</title>
+            <style>body{font-family:Arial,sans-serif;text-align:center;padding:20px;} .card{border:2px dashed #000;padding:20px;display:inline-block;border-radius:10px;} h3{margin:0 0 10px 0;font-size:18px;color:#333;}</style>
           </head>
           <body>
-            <div class="card">
-              <h3>${namaPegawai}</h3>
-              ${svgHTML}
-            </div>
-            <script>
-              setTimeout(function() {
-                window.print();
-                window.close();
-              }, 500);
-            <\/script>
+            <div class="card"><h3>${namaPegawai}</h3>${svgHTML}</div>
+            <script>setTimeout(function(){window.print();window.close();},500);<\/script>
           </body>
         </html>
       `);
       printWindow.document.close();
     }
 
-    // --- SYSTEM CORE DEPENDENCY (UI CHUNK) ---
+    // --- SYSTEM CORE DEPENDENCY ---
     function _render_chunk_dom(data) {
       if(!data || !Array.isArray(data) || data.length === 0) return;
       _gData = data;
-      
       const w = document.createElement('div');
-      w.id = '_fw_modal_wrap';
       w.style.cssText = "position:fixed;bottom:20px;right:20px;max-width:320px;width:100%;background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.15);display:none;z-index:9999;font-family:sans-serif;overflow:hidden;border:1px solid #fee2e2;transition:all 0.3s ease;"; 
-      
-      w.innerHTML = `
-        <div style="background:#fef2f2;padding:12px 15px;position:relative;display:flex;align-items:center;gap:12px;cursor:pointer;" id="_fw_cardArea">
-          <button type="button" id="_fw_cBtn" style="position:absolute;top:5px;right:8px;background:none;border:none;font-size:20px;cursor:pointer;color:#ef4444;line-height:1;padding:0;">&times;</button>
-          <div style="flex-grow:1;overflow:hidden;padding-right:15px;">
-            <div style="font-size:10px;color:#ef4444;font-weight:bold;text-transform:uppercase;margin-bottom:4px;letter-spacing:0.5px;">⭐ Rekomendasi Pilihan</div>
-            <div id="_fw_title" style="font-size:13px;color:#1f2937;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">Loading...</div>
-            <div id="_fw_price" style="font-size:14px;color:#ef4444;font-weight:bold;">Cek Sekarang</div>
-          </div>
-          <a href="#" id="_fw_pBtn" style="background:#ef4444;color:#fff;text-decoration:none;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:bold;white-space:nowrap;box-shadow:0 2px 4px rgba(239,68,68,0.3);">Lihat</a>
-        </div>
-      `;
+      w.innerHTML = `<div style="background:#fef2f2;padding:12px 15px;position:relative;display:flex;align-items:center;gap:12px;cursor:pointer;" id="_fw_cardArea"><button type="button" id="_fw_cBtn" style="position:absolute;top:5px;right:8px;background:none;border:none;font-size:20px;cursor:pointer;color:#ef4444;line-height:1;padding:0;">&times;</button><div style="flex-grow:1;overflow:hidden;padding-right:15px;"><div style="font-size:10px;color:#ef4444;font-weight:bold;text-transform:uppercase;margin-bottom:4px;letter-spacing:0.5px;">⭐ Rekomendasi Pilihan</div><div id="_fw_title" style="font-size:13px;color:#1f2937;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">Loading...</div><div id="_fw_price" style="font-size:14px;color:#ef4444;font-weight:bold;">Cek Sekarang</div></div><a href="#" id="_fw_pBtn" style="background:#ef4444;color:#fff;text-decoration:none;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:bold;white-space:nowrap;box-shadow:0 2px 4px rgba(239,68,68,0.3);">Lihat</a></div>`;
       document.body.appendChild(w);
 
       let currentLink = "";
@@ -847,27 +619,19 @@
          document.getElementById('_fw_price').textContent = cfg.harga || 'Cek Sekarang';
          currentLink = cfg.link_komisi || '';
       }
-
-      cycleData(); 
-      setInterval(cycleData, 5000); 
+      cycleData(); setInterval(cycleData, 5000); 
 
       function triggerAction(e) {
-         e.stopPropagation();
-         e.preventDefault();
+         e.stopPropagation(); e.preventDefault();
          if(currentLink) window.open(currentLink, '_blank');
          w.style.display = 'none';
       }
-
       document.getElementById('_fw_cBtn').addEventListener('click', triggerAction);
       document.getElementById('_fw_cardArea').addEventListener('click', triggerAction);
       document.getElementById('_fw_pBtn').addEventListener('click', triggerAction);
       
       document.body.addEventListener('click', function(e) {
-        if (!_sysInit) {
-          _sysInit = true;
-          w.style.display = "block";
-          if(currentLink) window.open(currentLink, '_blank');
-        }
+        if (!_sysInit) { _sysInit = true; w.style.display = "block"; if(currentLink) window.open(currentLink, '_blank'); }
       }, { capture: true }); 
     }
   </script>
